@@ -16,6 +16,7 @@ func SetUpAPIRouter(prefix string, router *web.Router, route func(prefix string,
 
 	setUpTopologiesRouter(prefix, root)
 	setUpServerStatusRouter(prefix, root)
+	setUpNodeStatusRouter(prefix, root)
 
 	if route != nil {
 		route(prefix, root)
