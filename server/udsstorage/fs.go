@@ -4,14 +4,15 @@ import (
 	"bufio"
 	"errors"
 	"fmt"
-	"gopkg.in/sensorbee/sensorbee.v0/bql/udf"
-	"gopkg.in/sensorbee/sensorbee.v0/core"
 	"io"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 	"regexp"
 	"strings"
+
+	"gopkg.in/sensorbee/sensorbee.v0/bql/udf"
+	"gopkg.in/sensorbee/sensorbee.v0/core"
 )
 
 // fsUDSStorage is a UDSStorage which store states as files on a filesystem.
@@ -27,6 +28,7 @@ var (
 	_ udf.UDSStorage = &fsUDSStorage{}
 )
 
+// NewFS returns UDSStrage with directory path.
 func NewFS(dir, tempDir string) (udf.UDSStorage, error) {
 	if err := validateDir(dir); err != nil {
 		return nil, fmt.Errorf("dir (%v) isn't valid: %v", dir, err)

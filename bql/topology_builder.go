@@ -3,16 +3,18 @@ package bql
 import (
 	"errors"
 	"fmt"
+	"math"
+	"sync"
+	"sync/atomic"
+
 	"gopkg.in/sensorbee/sensorbee.v0/bql/execution"
 	"gopkg.in/sensorbee/sensorbee.v0/bql/parser"
 	"gopkg.in/sensorbee/sensorbee.v0/bql/udf"
 	"gopkg.in/sensorbee/sensorbee.v0/core"
 	"gopkg.in/sensorbee/sensorbee.v0/data"
-	"math"
-	"sync"
-	"sync/atomic"
 )
 
+// TopologyBuilder manages a topology and nodes under the topology dynamically.
 type TopologyBuilder struct {
 	topology       core.Topology
 	Reg            udf.FunctionManager
@@ -87,6 +89,7 @@ func topologyBuilderNextTemporaryID() int64 {
 	return atomic.AddInt64(&topologyBuilderTemporaryID, 1)
 }
 
+// Topology returns the topology managed by this builder.
 func (tb *TopologyBuilder) Topology() core.Topology {
 	return tb.topology
 }
@@ -409,7 +412,7 @@ func (s *udsfSource) Stop(ctx *core.Context) error {
 func (tb *TopologyBuilder) createStreamAsSelectStmt(stmt *parser.CreateStreamAsSelectStmt) (core.Node, error) {
 	// insert a bqlBox that executes the SELECT statement
 	outName := string(stmt.Name)
-	box := NewBQLBox(&stmt.Select, tb.Reg)
+	box := newBQLBox(&stmt.Select, tb.Reg)
 	// add all the referenced relations as named inputs
 	dbox, err := tb.topology.AddBox(outName, box, nil)
 	if err != nil {

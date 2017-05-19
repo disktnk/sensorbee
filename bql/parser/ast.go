@@ -2,11 +2,13 @@ package parser
 
 import (
 	"fmt"
-	"gopkg.in/sensorbee/sensorbee.v0/data"
 	"strconv"
 	"strings"
+
+	"gopkg.in/sensorbee/sensorbee.v0/data"
 )
 
+// Expression represents operator of each syntax tree.
 type Expression interface {
 	ReferencedRelations() map[string]bool
 	RenameReferencedRelation(string, string) Expression
@@ -21,6 +23,7 @@ type Expression interface {
 
 // Combined Structures (all with *AST)
 
+// SelectStmt represents SELECT syntax.
 type SelectStmt struct {
 	EmitterAST
 	ProjectionsAST
@@ -47,6 +50,7 @@ func (s SelectStmt) String() string {
 	return strings.Join(st, " ")
 }
 
+// SelectUnionStmt represents SELECT .. UNION syntax.
 type SelectUnionStmt struct {
 	Selects []SelectStmt
 }
@@ -59,6 +63,7 @@ func (s SelectUnionStmt) String() string {
 	return strings.Join(str, " UNION ALL ")
 }
 
+// CreateStreamAsSelectStmt represents CREATE STREAM .. AS SELECT syntax.
 type CreateStreamAsSelectStmt struct {
 	Name   StreamIdentifier
 	Select SelectStmt
@@ -69,6 +74,8 @@ func (s CreateStreamAsSelectStmt) String() string {
 	return strings.Join(str, " ")
 }
 
+// CreateStreamAsSelectUnionStmt represents CREATE STREAM .. AS SELECT .. UNION
+// syntax.
 type CreateStreamAsSelectUnionStmt struct {
 	Name StreamIdentifier
 	SelectUnionStmt
@@ -79,6 +86,7 @@ func (s CreateStreamAsSelectUnionStmt) String() string {
 	return strings.Join(str, " ")
 }
 
+// CreateSourceStmt represents CREATE SOURCE .. syntax.
 type CreateSourceStmt struct {
 	Paused BinaryKeyword
 	Name   StreamIdentifier
@@ -99,6 +107,7 @@ func (s CreateSourceStmt) String() string {
 	return strings.Join(str, " ")
 }
 
+// CreateSinkStmt represents CREATE SINK .. syntax.
 type CreateSinkStmt struct {
 	Name StreamIdentifier
 	Type SourceSinkType
@@ -114,6 +123,7 @@ func (s CreateSinkStmt) String() string {
 	return strings.Join(str, " ")
 }
 
+// CreateStateStmt represents CREATE STATE .. syntax.
 type CreateStateStmt struct {
 	Name StreamIdentifier
 	Type SourceSinkType
@@ -129,6 +139,7 @@ func (s CreateStateStmt) String() string {
 	return strings.Join(str, " ")
 }
 
+// UpdateStateStmt represents UPDATE STATE .. syntax.
 type UpdateStateStmt struct {
 	Name StreamIdentifier
 	SourceSinkSpecsAST
@@ -143,6 +154,7 @@ func (s UpdateStateStmt) String() string {
 	return strings.Join(str, " ")
 }
 
+// UpdateSourceStmt represents UPDATE SOURCE .. syntax.
 type UpdateSourceStmt struct {
 	Name StreamIdentifier
 	SourceSinkSpecsAST
@@ -157,6 +169,7 @@ func (s UpdateSourceStmt) String() string {
 	return strings.Join(str, " ")
 }
 
+// UpdateSinkStmt represents UPDATE SINK .. syntax.
 type UpdateSinkStmt struct {
 	Name StreamIdentifier
 	SourceSinkSpecsAST
@@ -171,6 +184,7 @@ func (s UpdateSinkStmt) String() string {
 	return strings.Join(str, " ")
 }
 
+// InsertIntoFromStmt represents INSERT INTO .. FROM syntax.
 type InsertIntoFromStmt struct {
 	Sink  StreamIdentifier
 	Input StreamIdentifier
@@ -181,6 +195,7 @@ func (s InsertIntoFromStmt) String() string {
 	return strings.Join(str, " ")
 }
 
+// PauseSourceStmt represents PAUSE SOURCE .. syntax.
 type PauseSourceStmt struct {
 	Source StreamIdentifier
 }
@@ -190,6 +205,7 @@ func (s PauseSourceStmt) String() string {
 	return strings.Join(str, " ")
 }
 
+// ResumeSourceStmt represents RESUME SOURCE .. syntax.
 type ResumeSourceStmt struct {
 	Source StreamIdentifier
 }
@@ -199,6 +215,7 @@ func (s ResumeSourceStmt) String() string {
 	return strings.Join(str, " ")
 }
 
+// RewindSourceStmt represents REWIND SOURCE .. syntax.
 type RewindSourceStmt struct {
 	Source StreamIdentifier
 }
@@ -208,6 +225,7 @@ func (s RewindSourceStmt) String() string {
 	return strings.Join(str, " ")
 }
 
+// DropSourceStmt represents DROP SOURCE .. syntax.
 type DropSourceStmt struct {
 	Source StreamIdentifier
 }
@@ -217,6 +235,7 @@ func (s DropSourceStmt) String() string {
 	return strings.Join(str, " ")
 }
 
+// DropStreamStmt represents DROP STREAM .. syntax.
 type DropStreamStmt struct {
 	Stream StreamIdentifier
 }
@@ -226,6 +245,7 @@ func (s DropStreamStmt) String() string {
 	return strings.Join(str, " ")
 }
 
+// DropSinkStmt represents DROP SINK .. syntax.
 type DropSinkStmt struct {
 	Sink StreamIdentifier
 }
@@ -235,6 +255,7 @@ func (s DropSinkStmt) String() string {
 	return strings.Join(str, " ")
 }
 
+// DropStateStmt represents DROP STATE .. syntax.
 type DropStateStmt struct {
 	State StreamIdentifier
 }
@@ -244,6 +265,7 @@ func (s DropStateStmt) String() string {
 	return strings.Join(str, " ")
 }
 
+// LoadStateStmt represents LOAD STATE .. syntax.
 type LoadStateStmt struct {
 	Name StreamIdentifier
 	Type SourceSinkType
@@ -263,6 +285,7 @@ func (s LoadStateStmt) String() string {
 	return strings.Join(str, " ")
 }
 
+// LoadStateOrCreateStmt represents LOAD STATE .. OR CREATE .. syntax.
 type LoadStateOrCreateStmt struct {
 	Name        StreamIdentifier
 	Type        SourceSinkType
@@ -290,6 +313,7 @@ func (s LoadStateOrCreateStmt) String() string {
 	return strings.Join(str, " ")
 }
 
+// SaveStateStmt represents SAVE STATE .. syntax.
 type SaveStateStmt struct {
 	Name StreamIdentifier
 	Tag  string
@@ -303,6 +327,7 @@ func (s SaveStateStmt) String() string {
 	return strings.Join(str, " ")
 }
 
+// EvalStmt represents EVAL .. syntax.
 type EvalStmt struct {
 	Expr  Expression
 	Input *MapAST
@@ -316,6 +341,7 @@ func (s EvalStmt) String() string {
 	return strings.Join(str, " ")
 }
 
+// EmitterAST represents a part of emission, [RANGE ..].
 type EmitterAST struct {
 	EmitterType    Emitter
 	EmitterOptions []interface{}
@@ -338,10 +364,12 @@ func (a EmitterAST) string() string {
 	return s
 }
 
+// EmitterLimit represents a part of emission with limit, [LIMIT ..].
 type EmitterLimit struct {
 	Limit int64
 }
 
+// EmitterSampling represents a part of emission with sampling, [EVERY ..].
 type EmitterSampling struct {
 	Value float64
 	Type  EmitterSamplingType
@@ -370,6 +398,7 @@ func (e EmitterSampling) string() string {
 	return ""
 }
 
+// ProjectionsAST represents emission values.
 type ProjectionsAST struct {
 	Projections []Expression
 }
@@ -382,27 +411,33 @@ func (a ProjectionsAST) string() string {
 	return strings.Join(prj, ", ")
 }
 
+// AliasAST represents an alias of a value, .. AS ..
 type AliasAST struct {
 	Expr  Expression
 	Alias string
 }
 
+// ReferencedRelations returns a values to be emitted.
 func (a AliasAST) ReferencedRelations() map[string]bool {
 	return a.Expr.ReferencedRelations()
 }
 
+// RenameReferencedRelation returns an expression, represented aliased value.
 func (a AliasAST) RenameReferencedRelation(from, to string) Expression {
 	return AliasAST{a.Expr.RenameReferencedRelation(from, to), a.Alias}
 }
 
+// Foldable returns the tree is fold-able or not.
 func (a AliasAST) Foldable() bool {
 	return a.Expr.Foldable()
 }
 
+// String returns a syntax of aliased value.
 func (a AliasAST) String() string {
 	return a.Expr.String() + " AS " + a.Alias
 }
 
+// WindowedFromAST represents data sources, .. FROM ..
 type WindowedFromAST struct {
 	Relations []AliasedStreamWindowAST
 }
@@ -419,6 +454,7 @@ func (a WindowedFromAST) string() string {
 	return "FROM " + strings.Join(str, ", ")
 }
 
+// AliasedStreamWindowAST represented data sources with alias, .. FROM .. AS ..
 type AliasedStreamWindowAST struct {
 	StreamWindowAST
 	Alias string
@@ -432,6 +468,8 @@ func (a AliasedStreamWindowAST) string() string {
 	return str
 }
 
+// UnspecifiedCapacity is an initialized value for emission capacity, means
+// not setup.
 const UnspecifiedCapacity int64 = -1
 
 type StreamWindowAST struct {

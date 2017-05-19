@@ -3,9 +3,10 @@ package udf
 import (
 	"errors"
 	"fmt"
+	"reflect"
+
 	"gopkg.in/sensorbee/sensorbee.v0/core"
 	"gopkg.in/sensorbee/sensorbee.v0/data"
-	"reflect"
 )
 
 // UDSFCreator creates a new UDSF instance.
@@ -85,11 +86,12 @@ func ConvertToUDSFCreator(function interface{}) (UDSFCreator, error) {
 		return nil, err
 	}
 
-	if convs, err := createGenericConverters(t, t.NumIn()-g.arity); err != nil {
+	convs, err := createGenericConverters(t, t.NumIn()-g.arity)
+	if err != nil {
 		return nil, err
-	} else {
-		g.converters = convs
 	}
+	g.converters = convs
+
 	return g, nil
 }
 

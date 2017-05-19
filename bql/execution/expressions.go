@@ -4,9 +4,10 @@ import (
 	"crypto/sha1"
 	"encoding/hex"
 	"fmt"
+	"strings"
+
 	"gopkg.in/sensorbee/sensorbee.v0/bql/parser"
 	"gopkg.in/sensorbee/sensorbee.v0/bql/udf"
-	"strings"
 )
 
 // aliasedExpression represents an expression in a SELECT clause
@@ -212,7 +213,8 @@ func ParserExprToFlatExpr(e parser.Expression, reg udf.FunctionRegistry) (FlatEx
 			}
 			pairs[i] = whenThenPair{expr1, expr2}
 		}
-		var defaultExpr FlatExpression = nullLiteral{}
+		var defaultExpr FlatExpression
+		defaultExpr = nullLiteral{}
 		if obj.Else != nil {
 			var err error
 			defaultExpr, err = ParserExprToFlatExpr(obj.Else, reg)
@@ -503,7 +505,8 @@ func ParserExprToMaybeAggregate(e parser.Expression, aggIdx int, reg udf.Functio
 		}
 
 		newAggIdx := aggIdx + len(returnAgg)
-		var defaultExpr FlatExpression = nullLiteral{}
+		var defaultExpr FlatExpression
+		defaultExpr = nullLiteral{}
 		if obj.Else != nil {
 			var err error
 			var agg map[string]FlatExpression

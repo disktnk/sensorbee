@@ -114,17 +114,18 @@ func convertGenericAggregate(function interface{}, aggParams []bool, isAggregate
 		}
 	}
 
-	if hasError, err := checkGenericFuncReturnTypes(t); err != nil {
+	hasError, err := checkGenericFuncReturnTypes(t)
+	if err != nil {
 		return nil, err
-	} else {
-		g.hasError = hasError
 	}
+	g.hasError = hasError
 
-	if convs, err := createGenericConverters(t, t.NumIn()-g.arity); err != nil {
+	convs, err := createGenericConverters(t, t.NumIn()-g.arity)
+	if err != nil {
 		return nil, err
-	} else {
-		g.converters = convs
 	}
+	g.converters = convs
+
 	return g, nil
 }
 

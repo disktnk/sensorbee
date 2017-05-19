@@ -1,14 +1,15 @@
 package bql
 
 import (
+	"math/rand"
+	"sync"
+	"time"
+
 	"github.com/Sirupsen/logrus"
 	"gopkg.in/sensorbee/sensorbee.v0/bql/execution"
 	"gopkg.in/sensorbee/sensorbee.v0/bql/parser"
 	"gopkg.in/sensorbee/sensorbee.v0/bql/udf"
 	"gopkg.in/sensorbee/sensorbee.v0/core"
-	"math/rand"
-	"sync"
-	"time"
 )
 
 type bqlBox struct {
@@ -52,7 +53,7 @@ type bqlBox struct {
 	removeMe func()
 }
 
-func NewBQLBox(stmt *parser.SelectStmt, reg udf.FunctionRegistry) *bqlBox {
+func newBQLBox(stmt *parser.SelectStmt, reg udf.FunctionRegistry) *bqlBox {
 	return &bqlBox{stmt: stmt, reg: reg}
 }
 
@@ -114,7 +115,7 @@ func (b *bqlBox) Process(ctx *core.Context, t *core.Tuple, s core.Writer) error 
 			shouldWriteTuple = b.genCount%int64(b.emitterSampling) == 0
 			// with 1,000,000 items per second, the counter below will
 			// overflow after running for 292,471 years. probably ok.
-			b.genCount += 1
+			b.genCount++
 		} else if b.emitterSamplingType == parser.RandomizedSampling {
 			// emitterSampling is in [0,1], not [0,100] any more
 			shouldWriteTuple = rand.Float64() < b.emitterSampling
@@ -134,7 +135,7 @@ func (b *bqlBox) Process(ctx *core.Context, t *core.Tuple, s core.Writer) error 
 				return err
 			}
 			b.timeEmitterMutex.Lock()
-			b.emitCount += 1
+			b.emitCount++
 			b.timeEmitterMutex.Unlock()
 		}
 		// stop emitting if we have hit the limit
@@ -196,7 +197,7 @@ func (b *bqlBox) timeEmitter(ctx *core.Context) {
 				// we set it to null
 				b.lastTuple = nil
 				// increase the counter and check if we have reached the limit
-				b.emitCount += 1
+				b.emitCount++
 				if b.emitterLimit >= 0 && b.emitCount >= b.emitterLimit {
 					b.stopped = true
 					// if this function sets the b.stopped flag itself, it must

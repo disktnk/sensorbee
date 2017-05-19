@@ -2,18 +2,22 @@ package execution
 
 import (
 	"fmt"
+	"math"
+	"regexp"
+	"strings"
+
 	"gopkg.in/sensorbee/sensorbee.v0/bql/parser"
 	"gopkg.in/sensorbee/sensorbee.v0/bql/udf"
 	"gopkg.in/sensorbee/sensorbee.v0/core"
 	"gopkg.in/sensorbee/sensorbee.v0/data"
-	"math"
-	"regexp"
-	"strings"
 )
 
 const (
-	MaxRangeTuples   float64 = 1<<20 - 1
-	MaxRangeSec      float64 = 60 * 60 * 24
+	// MaxRangeTuples defines maximum count of tuple range.
+	MaxRangeTuples float64 = 1<<20 - 1
+	// MaxRangeSec defines maximum time of time range.
+	MaxRangeSec float64 = 60 * 60 * 24
+	// MaxRangeMillisec defines maximum of time range (millisecond).
 	MaxRangeMillisec float64 = 60 * 60 * 24 * 1000
 )
 

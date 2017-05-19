@@ -3,11 +3,12 @@ package exp
 import (
 	"encoding/json"
 	"fmt"
-	"gopkg.in/sensorbee/sensorbee.v0/data"
 	"io"
 	"io/ioutil"
 	"os"
 	"time"
+
+	"gopkg.in/sensorbee/sensorbee.v0/data"
 )
 
 // CacheEntry has an cache information of a specific BQL statement.
@@ -76,11 +77,12 @@ func CacheFilename(ent *CacheEntry) string {
 	return CacheFilenameWithName(ent, ent.NodeName, "jsonl")
 }
 
+// StateCacheFilename returns the file name from a state entry.
 func StateCacheFilename(ent *CacheEntry, stateName string) string {
 	return CacheFilenameWithName(ent, stateName, "state")
 }
 
-// CacheFilenameWithNodeName computes the filename from a cache entry with a
+// CacheFilenameWithName computes the filename from a cache entry with a
 // custom node name.
 func CacheFilenameWithName(ent *CacheEntry, name, ext string) string {
 	return fmt.Sprintf("%v-%v-%v.%v", name, ent.Timestamp.Format("20060102150405"), ent.Hash[:8], ext)

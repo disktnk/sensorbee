@@ -87,6 +87,7 @@ func action(c *cli.Context) (retErr error) {
 	return nil
 }
 
+// Config is a configuration struct of build_sensorbee command.
 type Config struct {
 	PluginPaths []string                 `yaml:"plugins"`
 	SubCommands map[string]commandDetail `yaml:"commands"`

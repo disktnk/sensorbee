@@ -84,12 +84,11 @@ func Run(c *cli.Context) error {
 				}
 				return config.New(m)
 
-			} else {
-				// Currently there's no required parameters. However, when a required
-				// parameter is added to Config, remove this else block and add a
-				// default value like "/etc/sensorbee/config.yaml" to the config option.
-				return config.New(data.Map{})
 			}
+			// Currently there's no required parameters. However, when a required
+			// parameter is added to Config, remove this else block and add a
+			// default value like "/etc/sensorbee/config.yaml" to the config option.
+			return config.New(data.Map{})
 		}()
 		if err != nil {
 			return err

@@ -3,11 +3,12 @@ package builtin
 import (
 	"bytes"
 	"fmt"
+	"math"
+	"sort"
+
 	"gopkg.in/sensorbee/sensorbee.v0/bql/udf"
 	"gopkg.in/sensorbee/sensorbee.v0/core"
 	"gopkg.in/sensorbee/sensorbee.v0/data"
-	"math"
-	"sort"
 )
 
 // singleParamAggFunc is a template for aggregate functions that
@@ -299,16 +300,14 @@ var jsonObjectAggFunc udf.UDF = &twoParamAggFunc{
 					return nil, fmt.Errorf("key '%s' appears multiple times", s)
 				}
 				result[s] = value
+				continue
 			} else if key.Type() == data.TypeNull && value.Type() == data.TypeNull {
 				continue
 			} else if key.Type() == data.TypeNull {
 				return nil, fmt.Errorf("key is null but value (%s) is not", value)
-			} else {
-				// DO NOT outdent this block, even if golint recommends it,
-				// or we will never reach the next iteration
-				return nil, fmt.Errorf("cannot interpret %s (%T) as a string",
-					key, key)
 			}
+			return nil, fmt.Errorf("cannot interpret %s (%T) as a string",
+				key, key)
 		}
 		return result, nil
 	},

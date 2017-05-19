@@ -1,18 +1,19 @@
-// run package implements sensorbee's subcommand command which runs an API
+// Package run implements sensorbee's subcommand command which runs an API
 // server.
 package run
 
 import (
 	"fmt"
+	"io/ioutil"
+	"net"
+	"net/http"
+
 	"gopkg.in/pfnet/jasco.v1"
 	"gopkg.in/sensorbee/sensorbee.v0/data"
 	"gopkg.in/sensorbee/sensorbee.v0/server"
 	"gopkg.in/sensorbee/sensorbee.v0/server/config"
 	"gopkg.in/urfave/cli.v1"
 	"gopkg.in/yaml.v2"
-	"io/ioutil"
-	"net"
-	"net/http"
 )
 
 // SetUp sets up SensorBee's HTTP server. The URL or port ID is set with server

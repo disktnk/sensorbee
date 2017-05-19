@@ -10,15 +10,18 @@ import (
 	"github.com/mattn/go-runewidth"
 )
 
-type bqlParser struct {
+// BQLParser parsing BQL syntaxes represented by PEG.
+type BQLParser struct {
 	b bqlPeg
 }
 
-func New() *bqlParser {
-	return &bqlParser{}
+// New returns a parser for BQL.
+func New() *BQLParser {
+	return &BQLParser{}
 }
 
-func (p *bqlParser) ParseStmt(s string) (result interface{}, rest string, err error) {
+// ParseStmt returns a parsed node and rest string.
+func (p *BQLParser) ParseStmt(s string) (result interface{}, rest string, err error) {
 	// catch any parser errors
 	defer func() {
 		if r := recover(); r != nil {
@@ -52,18 +55,19 @@ func (p *bqlParser) ParseStmt(s string) (result interface{}, rest string, err er
 	return stackElem.comp, rest, nil
 }
 
-func (p *bqlParser) ParseStmts(s string) ([]interface{}, error) {
+// ParseStmts returns statement node.
+func (p *BQLParser) ParseStmts(s string) ([]interface{}, error) {
 	// parse all statements
-	results := make([]interface{}, 0)
+	results := []interface{}{}
 	rest := strings.TrimSpace(s)
 	for rest != "" {
-		result, rest_, err := p.ParseStmt(rest)
+		result, restTmp, err := p.ParseStmt(rest)
 		if err != nil {
 			return nil, err
 		}
 		// append the parsed statement to the result list
 		results = append(results, result)
-		rest = rest_
+		rest = restTmp
 	}
 	return results, nil
 }
